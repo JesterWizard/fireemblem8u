@@ -70,17 +70,21 @@ ROM          := fireemblem8.gba
 UNPADDED_ROM := $(ROM:.gba=.unpadded.gba)
 ELF          := $(ROM:.gba=.elf)
 MAP          := $(ROM:.gba=.map)
+ROM_SIZE_REPORT := scripts/rom_size.py
+COMPRESSION_SAVED_BYTES := 298280
+# Text/data bytes removed by the opening-animation optional target.
+OPTIONAL_REMOVED_BYTES := 411436
 LDSCRIPT     := ldscript.txt
 SYM_FILES    := sym_iwram.txt
 CFILES_GENERATED := $(C_SUBDIR)/msg_data.c
-CFILES       := $(wildcard $(C_SUBDIR)/*.c)
+CFILES       := $(filter-out $(C_SUBDIR)/opanim-main.c $(C_SUBDIR)/opanimfx.c,$(wildcard $(C_SUBDIR)/*.c))
 ifeq (,$(findstring $(CFILES_GENERATED),$(CFILES)))
 CFILES       += $(CFILES_GENERATED)
 endif
 ASM_S_FILES  := $(wildcard $(ASM_SUBDIR)/*.s)
 SRC_S_FILES  := src/rom_header.s src/crt0.s src/m4a_1.s src/libagbsyscall.s
 DATA_S_FILES := $(wildcard $(DATA_SUBDIR)/*.s)
-DATA_SRC_C_FILES := $(wildcard $(DATA_SRC_SUBDIR)/*.c $(DATA_SRC_SUBDIR)/mapanim/*.c $(DATA_SRC_SUBDIR)/menu/*.c $(DATA_SRC_SUBDIR)/ending/*.c $(DATA_SRC_SUBDIR)/worldmap/*.c $(DATA_SRC_SUBDIR)/ui/*.c)
+DATA_SRC_C_FILES := $(filter-out $(DATA_SRC_SUBDIR)/opanim.c $(DATA_SRC_SUBDIR)/data_AA6BFA.c $(DATA_SRC_SUBDIR)/data_opanim_gfx.c,$(wildcard $(DATA_SRC_SUBDIR)/*.c $(DATA_SRC_SUBDIR)/mapanim/*.c $(DATA_SRC_SUBDIR)/menu/*.c $(DATA_SRC_SUBDIR)/ending/*.c $(DATA_SRC_SUBDIR)/worldmap/*.c $(DATA_SRC_SUBDIR)/ui/*.c))
 DATA_SRC_C_OBJECTS := $(DATA_SRC_C_FILES:.c=.o)
 DATA_SRC_SFILES_COMPILED := $(DATA_SRC_C_FILES:.c=.s)
 # Hand-written (extracted, descriptively-named) data assembled directly. Kept in
@@ -114,7 +118,13 @@ src/menu_def.o: CC1FLAGS += -Wno-error
 compare: $(ROM)
 	$(SHASUM) -c checksum.sha1
 
-.PHONY: compare
+rom_size: $(ROM) $(UNPADDED_ROM) $(MAP)
+	$(PYTHON) $(ROM_SIZE_REPORT) \
+	    --rom $(ROM) --unpadded $(UNPADDED_ROM) --map $(MAP) \
+	    --compression-bytes $(COMPRESSION_SAVED_BYTES) \
+	    --removed-bytes $(OPTIONAL_REMOVED_BYTES)
+
+.PHONY: compare rom_size
 
 #### Shiftability harness (scripts/shiftcheck/) ####
 # Detects hardcoded pointers (raw absolute addresses that bypass the symbol system)

@@ -554,8 +554,6 @@ SECTIONS
         src/ending_credits.o(.text);
         src/opsubtitle.o(.text);
         src/titlescreen.o(.text);
-        src/opanimfx.o(.text);
-        src/opanim-main.o(.text);
         src/opanim-healthsafetyscreen.o(.text);
         src/classchg-main.o(.text);
         src/classchg-handler.o(.text);
@@ -1210,13 +1208,9 @@ SECTIONS
         . = ALIGN(4); src/opsubtitle.o(.data);
         . = ALIGN(4); src/data/data_opsubtitle.o(.data);
         . = ALIGN(4); src/titlescreen.o(.data);
-        . = ALIGN(4); src/opanimfx.o(.data);
-        . = ALIGN(4); src/opanim-main.o(.data);
-        . = ALIGN(4); src/data/data_AA6BFA.o(.data);
-        . = ALIGN(4); src/data/opanim.o(.data);
         . = ALIGN(4); src/opanim-healthsafetyscreen.o(.data);
         . = ALIGN(4); src/data/data_titlescreen.o(.data);
-        . = ALIGN(4); src/data/data_opanim_gfx.o(.data);
+        . = ALIGN(4); src/data/data_opanim_healthsafety.o(.data);
         . = ALIGN(4); src/classchg-main.o(.data);
         . = ALIGN(4); src/classchg-handler.o(.data);
         . = ALIGN(4); src/classchg-sel.o(.data);

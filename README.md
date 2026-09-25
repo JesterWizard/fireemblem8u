@@ -41,6 +41,13 @@ To build the ROM:
 ```bash
 make fireemblem8.gba -j$(nproc)
 ```
+To report the padded size, actual linked range, trailing padding, and space
+reclaimed by the optional removals:
+```bash
+make rom_size
+```
+See [`docs/rom-savings.md`](docs/rom-savings.md) for the cumulative compression
+and removal savings.
 To clean all build artifacts:
 ```bash
 make clean
@@ -82,6 +89,22 @@ make
 ```
 fireemblem8.gba: OK
 ```
+
+### Optional removal targets
+
+The default build keeps all original content. The following are opt-in removal
+targets for smaller, customized ROMs; removing them makes the result intentionally
+non-matching and should be kept behind an explicit local change.
+
+* **Opening animation before the title screen** — removed in this working tree.
+  `gProcScr_GameControl` now proceeds from the health/safety screen directly to
+  the title screen, and the opening-animation code/data objects are no longer
+  linked. The title-screen reveal remains intact. This frees roughly 402 KiB of
+  linked content, but the ROM file remains effectively 16 MiB because the
+  linker places unrelated assets at fixed addresses near the end of the ROM.
+* **Title-screen reveal effects** — the intro branch of `gProcScr_TitleScreen`
+  in `src/titlescreen.c`, between `TitleScreenTryJumpIntroAnim` and
+  `Title_EnterMainScreen`. This is separate from the opening animation above.
 
 Q: `fatal error: png.h: No such file or directory`
 

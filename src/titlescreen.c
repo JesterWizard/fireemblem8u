@@ -11,6 +11,35 @@
 #include "sysutil.h"
 #include "constants/songs.h"
 
+void BgAffineSetOpAnim(int scaling_radio, int angle)
+{
+    struct BgAffineSrcData data;
+
+    data.texX = 0x10000;
+    data.texY = 0x10000;
+    data.scrX = 0x78;
+    data.scrY = 0x50;
+    data.sx = scaling_radio;
+    data.sy = scaling_radio;
+    data.alpha = angle << 8;
+
+    BgAffineSet(&data, &gLCDControlBuffer.bg2affin, 1);
+}
+
+void BlendPaletteToColor(u16 * pal, u16 color, u16 blend)
+{
+    int i;
+
+    for (i = 0; i < 0x10; i++)
+    {
+        u8 r = ((RED_VALUE(*pal) * (0x10 - blend)) + (RED_VALUE(color) * blend)) >> 4;
+        u8 g = ((GREEN_VALUE(*pal) * (0x10 - blend)) + (GREEN_VALUE(color) * blend)) >> 4;
+        u8 b = ((BLUE_VALUE(*pal) * (0x10 - blend)) + (BLUE_VALUE(color) * blend)) >> 4;
+
+        *pal++ = ((b & 0x1f) << 10) | ((g & 0x1f) << 5) | (r & 0x1f);
+    }
+}
+
 u16 CONST_DATA gSprite_Title_FireEmblemLogo[] = {
     5,
     0x4000, 0xC000, 0x0000,

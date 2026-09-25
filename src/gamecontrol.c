@@ -28,7 +28,6 @@ extern u16 EventScr_EirikaModeGameEnd[];
 extern u16 EventScr_EphraimModeGameEnd[];
 
 extern struct ProcCmd CONST_DATA ProcScr_GameEarlyStartUI[]; // pre-intro cutscene
-extern struct ProcCmd CONST_DATA ProcScr_OpAnim[]; // intro cutscene
 extern struct ProcCmd CONST_DATA ProcScr_WorldMapWrapper[];
 
 struct ProcCmd CONST_DATA gUnused_Gamecontrol_0[] =
@@ -53,12 +52,10 @@ struct ProcCmd CONST_DATA gProcScr_GameControl[] =
 
 PROC_LABEL(LGAMECTRL_GAME_INTRO_UI),
     PROC_START_CHILD_BLOCKING(ProcScr_GameEarlyStartUI),
-
-    // fallthrough
+    PROC_GOTO(LGAMECTRL_TITLE_DIRECT),
 
 PROC_LABEL(LGAMECTRL_OP_ANIM),
     PROC_CALL(GameControl_EnableSoundEffects),
-    PROC_START_CHILD_BLOCKING(ProcScr_OpAnim),
     PROC_CALL(GameControl_PostIntro),
     PROC_YIELD,
     PROC_GOTO(4),
