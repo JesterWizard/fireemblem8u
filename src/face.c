@@ -13,6 +13,7 @@
 #include "face.h"
 
 struct FaceVramEntry EWRAM_DATA sFaceConfig[4] = { 0 };
+u8 EWRAM_OVERLAY(0) sFaceMouthBuffer[FACE_SLOT_COUNT][0x600] = { 0 };
 
 struct FaceVramEntry CONST_DATA gDefaultFaceConfig[FACE_SLOT_COUNT] =
 {
@@ -327,6 +328,11 @@ int FindFreeFaceSlot(void) {
 //! FE8U = 0x08005594
 void Face_OnInit(struct FaceProc* proc) {
     Decompress(proc->pFaceInfo->img, (void *)(sFaceConfig[proc->faceSlot].tileOffset + 0x06010000));
+
+    if (proc->pBlinkProc != NULL) {
+        Decompress(proc->pFaceInfo->imgMouth, sFaceMouthBuffer[proc->faceSlot]);
+    }
+
     return;
 }
 
@@ -948,7 +954,7 @@ void FaceMouth_Loop(struct FaceBlinkProc* proc) {
         offsetA += 16;
 
         Register2dChrMove(
-            proc->pFaceProc->pFaceInfo->imgMouth + offsetA * 0x20,
+            sFaceMouthBuffer[proc->pFaceProc->faceSlot] + offsetA * 0x20,
             (void*)(((proc->pFaceProc->oam2 + 28) & 0x3FF) * 0x20 + 0x06010000),
             4,
             2
@@ -980,7 +986,7 @@ void FaceMouth_Loop(struct FaceBlinkProc* proc) {
             }
 
             Register2dChrMove(
-                proc->pFaceProc->pFaceInfo->imgMouth + offsetB * 0x20,
+                sFaceMouthBuffer[proc->pFaceProc->faceSlot] + offsetB * 0x20,
                 (void*)(((proc->pFaceProc->oam2 + 28) & 0x3FF) * 0x20 + 0x06010000),
                 4,
                 2
@@ -1409,6 +1415,10 @@ void FaceChange_LoadGfx(struct UnkFaceProc* proc) {
     proc->pFaceInfo = GetPortraitData(proc->faceId);
 
     Decompress(proc->pFaceInfo->img, (void*)(sFaceConfig[proc->pFaceProc->faceSlot].tileOffset + 0x06010000));
+
+    if (proc->pFaceProc->pBlinkProc != NULL) {
+        Decompress(proc->pFaceInfo->imgMouth, sFaceMouthBuffer[proc->pFaceProc->faceSlot]);
+    }
 
     ApplyPalette(proc->pFaceInfo->pal, sFaceConfig[proc->pFaceProc->faceSlot].paletteId + 0x10);
 

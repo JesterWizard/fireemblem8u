@@ -1,6 +1,6 @@
 #include "global.h"
 
-u8 gWorldmapGmap_0[] = INCBIN_U8("graphics/misc/gUnknown_08A83364.4bpp");
+u8 gWorldmapGmap_0[] = INCBIN_U8("graphics/misc/gUnknown_08A83364.4bpp.lz");
 
 u16 gWorldmapGmap_1[] = INCBIN_U16("graphics/misc/gUnknown_08A95F64.4bpp");
 

@@ -15,6 +15,7 @@ extern u8 gUnk_61;
 extern u8 gWorldmapGmap_0[];  // FEB: worldmap_big_image Length:76800
 extern u16 gWorldmapGmap_2[]; // FEB: worldmap_big_palette Length:128
 extern u16 gWorldmapGmap_3[]; // FEB: worldmap_big_palettemap Length:673
+u8 EWRAM_OVERLAY(worldmap) sWorldmapGmapBuffer[0x12C00] = { 0 };
 
 //! FE8U = 0x080BA424
 void GMapScreen_OnWorldmapEventUpdate(void)
@@ -277,7 +278,8 @@ void MapScreen_Init(struct GmScreenProc * proc)
     proc->unk_3a = 0;
     proc->unk_38 = 0;
 
-    proc->unk_3c = gWorldmapGmap_0;
+    Decompress(gWorldmapGmap_0, sWorldmapGmapBuffer);
+    proc->unk_3c = sWorldmapGmapBuffer;
 
     proc->unk_40 = BG_GetMapBuffer(BG_3);
 

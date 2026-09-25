@@ -67,6 +67,7 @@ MID_SUBDIR = sound/songs/midi
 MAP_LAYOUT_SUBDIR = graphics/map/layout
 
 ROM          := fireemblem8.gba
+UNPADDED_ROM := $(ROM:.gba=.unpadded.gba)
 ELF          := $(ROM:.gba=.elf)
 MAP          := $(ROM:.gba=.map)
 LDSCRIPT     := ldscript.txt
@@ -166,7 +167,7 @@ shiftcheck: shiftcheck-build shiftcheck-static shiftcheck-offsets shiftcheck-dif
 
 .PHONY: shiftcheck shiftcheck-build shiftcheck-static shiftcheck-offsets shiftcheck-diff shiftcheck-run
 
-CLEAN_FILES := $(ROM) $(ELF) $(MAP) $(OBJECTS_LST) $(SFILES_COMPILED) $(DATA_SRC_SFILES_COMPILED) graphics/*.h $(CFILES_GENERATED) $(RELOCS_ELF) $(RELOCS_ELF:.elf=.map)
+CLEAN_FILES := $(ROM) $(UNPADDED_ROM) $(ELF) $(MAP) $(OBJECTS_LST) $(SFILES_COMPILED) $(DATA_SRC_SFILES_COMPILED) graphics/*.h $(CFILES_GENERATED) $(RELOCS_ELF) $(RELOCS_ELF:.elf=.map)
 CLEAN_DIRS := $(DEPS_DIR) $(SHIFTDIR)
 CLEAN_BINS := graphics/statscreen/*.bin $(SAMPLE_SUBDIR)/*.bin $(MAP_LAYOUT_SUBDIR)/*.bin graphics/map/*TileConfiguration*.bin $(AUTO_GEN_TARGETS)
 CLEAN_SONGS := $(MID_SUBDIR)/*.s
@@ -337,6 +338,9 @@ $(OBJECTS_LST): $(ALL_OBJECTS)
 $(ELF): $(ALL_OBJECTS) $(OBJECTS_LST) $(LDSCRIPT) $(SYM_FILES)
 	$(LD) -T $(LDSCRIPT) -Map $(MAP) @$(OBJECTS_LST) -R $(BANIM_OBJECT).sym.o -L tools/agbcc/lib -o $@ -lc -lgcc
 	$(STRIP) -N .gcc2_compiled. $@
+
+$(UNPADDED_ROM): $(ELF)
+	$(OBJCOPY) --strip-debug -O binary $< $@
 
 %.gba: %.elf
 	$(OBJCOPY) --strip-debug -O binary --pad-to 0x9000000 --gap-fill=0xff $< $@

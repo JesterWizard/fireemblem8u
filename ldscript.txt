@@ -54,6 +54,7 @@ SECTIONS
         . = ALIGN(4); src/uisupport.o(ewram_overlay_0);
         . = 0x01F148; gUnk_SoundRoom_0 = .;
         . = 0x01F19C; gSoundRoomVolumeGraphBuffer = .;
+        . = 0x01F19C; src/face.o(ewram_overlay_0);
     }
 
     ewram_overlay_gameending __ewram_start (NOLOAD) : ALIGN(4)
@@ -146,6 +147,7 @@ SECTIONS
         . = 0x01C5D0; gUnk_31 = .;
         . = 0x01C5D1; gUnk_32 = .;
         . = 0x01C5D4; gUnk_33 = .;
+        . = 0x01C5D4; src/worldmap_screen.o(ewram_overlay_worldmap);
     }
 
     ewram_data __ewram_start (NOLOAD) : ALIGN(4)
